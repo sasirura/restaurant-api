@@ -35,16 +35,16 @@ func (l *Logger) Info(message string, properties ...interface{}) {
 }
 
 func (l *Logger) Error(message string, properties ...interface{}) {
-	l.print(log.LevelInfo, message, propertiesToMap(properties))
+	l.print(log.LevelError, message, propertiesToMap(properties))
 }
 
 func (l *Logger) Fatal(message string, properties ...interface{}) {
-	l.print(log.LevelInfo, message, propertiesToMap(properties))
+	l.print(log.LevelFatal, message, propertiesToMap(properties))
 	os.Exit(1)
 }
 
 func (l *Logger) Debug(message string, properties ...interface{}) {
-	l.print(log.LevelInfo, message, propertiesToMap(properties))
+	l.print(log.LevelDebug, message, propertiesToMap(properties))
 }
 
 func (l *Logger) print(level log.Level, message string, properties map[string]string) {

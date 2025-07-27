@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,8 +30,14 @@ func Initialize() (*App, error) {
 		return nil, err
 	}
 
+	dsn := os.Getenv("DSN")
+	if dsn == "" {
+		log.Error("DSN environment variable is not set")
+		return nil, errors.New("DSN environment variable is required")
+	}
+
 	// Initialize database
-	db, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Error("Failed to connect to database", "error", err)
 		return nil, err
@@ -52,6 +59,12 @@ func Initialize() (*App, error) {
 
 	// Cors
 	app.Use(cors.New())
+
+	// Health check
+	// /livez -  Checks if the server is up and running
+	// //readyz - Assesses if the application is ready to handle requests
+	app.Use(healthcheck.New())
+
 	// Logger
 	ml := middlewareLogger.New(middlewareLogger.Config{
 		Format: "${time} ${method} ${path} - ${status} ${latency}\n",
@@ -62,10 +75,6 @@ func Initialize() (*App, error) {
 		Max:        100,
 		Expiration: 60,
 	}))
-	// Health check
-	// /livez -  Checks if the server is up and running
-	// //readyz - Assesses if the application is ready to handle requests
-	app.Use(healthcheck.New())
 
 	// Initialize services
 	squareService := services.New(db, log)

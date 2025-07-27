@@ -28,5 +28,8 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
+
+# Debug files for cmd/api
+cmd/api/__debug_bin*

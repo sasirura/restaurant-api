@@ -15,6 +15,8 @@ import (
 )
 
 func Authenticate(db *gorm.DB) fiber.Handler {
+	ctx := context.TODO()
+
 	return func(c *fiber.Ctx) error {
 		token := c.Get("Authorization")
 		if token == "" {
@@ -29,14 +31,14 @@ func Authenticate(db *gorm.DB) fiber.Handler {
 			),
 		)
 
-		tokenStatus, err := client.OAuth.RetrieveTokenStatus(context.TODO())
-		if err != nil {
+		tokenStatus, err := client.OAuth.RetrieveTokenStatus(ctx)
+		if err != nil || tokenStatus.MerchantID == nil {
 			log.Error("Failed to retrieve token status", "error", err.Error())
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to retrieve token status"})
 		}
 
-		// Get location ID
-		locations, err := client.Locations.List(context.TODO())
+		// Get merchant location
+		locations, err := client.Locations.List(ctx)
 		if err != nil || len(locations.Locations) == 0 {
 			log.Error("Failed to fetch locations", "error", err.Error())
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch Square locations"})
@@ -68,6 +70,8 @@ func Authenticate(db *gorm.DB) fiber.Handler {
 		log.Info("Restaurant authenticated", "restaurant_id", fmt.Sprintf("%d", restaurant.ID), "merchant_id", *tokenStatus.MerchantID)
 		c.Locals("restaurant", restaurant)
 		c.Locals("client", client)
+
+		log.Info("Restaurant authenticated", "restaurant_id", restaurant.ID)
 		return c.Next()
 	}
 }

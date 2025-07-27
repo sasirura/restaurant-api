@@ -17,7 +17,7 @@ type App struct {
 }
 
 func main() {
-	app, err := Init()
+	app, err := Initialize()
 	if err != nil {
 		log.Fatal("Failed to initialize app", "error", err)
 		return

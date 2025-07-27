@@ -18,7 +18,7 @@ import (
 )
 
 // Init initializes the application
-func Init() (*App, error) {
+func Initialize() (*App, error) {
 	// Initialize logger
 	log := logger.New(log.LevelInfo, os.Stdout)
 

@@ -97,7 +97,7 @@ func (s *SquareService) GetOrdersByTable(ctx context.Context, restaurant models.
 	if err := s.db.Where(&models.Order{
 		RestautantID: restaurant.ID,
 		TableNumber:  tableNumber,
-	}).Find(&orders).Error; err != nil {
+	}).Preload("Items").Preload("Totals").Find(&orders).Error; err != nil {
 		s.Logger.Error("Failed to fetch orders by table", "error", err, "table_number", tableNumber)
 		return nil, fmt.Errorf("failed to fetch orders: %w", err)
 	}
@@ -111,7 +111,7 @@ func (s *SquareService) GetOrderByID(ctx context.Context, restaurant models.Rest
 	if err := s.db.Where(&models.Order{
 		ID:           orderID,
 		RestautantID: restaurant.ID,
-	}).First(&order).Error; err != nil {
+	}).Preload("Items").Preload("Totals").First(&order).Error; err != nil {
 		s.Logger.Error("Failed to fetch order by ID", "error", err, "order_id", orderID)
 		return nil, fmt.Errorf("order not found: %w", err)
 	}

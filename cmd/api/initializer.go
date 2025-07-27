@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	middlewareLogger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
@@ -61,6 +62,10 @@ func Initialize() (*App, error) {
 		Max:        100,
 		Expiration: 60,
 	}))
+	// Health check
+	// /livez -  Checks if the server is up and running
+	// //readyz - Assesses if the application is ready to handle requests
+	app.Use(healthcheck.New())
 
 	// Initialize services
 	squareService := services.New(db, log)

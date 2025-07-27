@@ -1,12 +1,17 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/sasirura/restaurant-api/internal/handlers"
 )
 
 func (a *App) Routes() {
 
 	// API routes
+	// /metrics - Provides metrics for monitoring the application
+	// access this by baseUrl/metrics
+	a.fiber.Get("/metrics", monitor.New(monitor.Config{
+		Title: "Square POS API Metrics Page"}))
 	v1 := a.fiber.Group("/v1")
 	{
 		// Authenticated routes

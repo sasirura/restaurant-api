@@ -10,6 +10,7 @@ A secure, multi-tenant REST API built in Go using the Fiber framework. It integr
 
 - Go 1.21+
 - PostgreSQL running locally on default port (`5432`)
+- Square POS account with token
 
 ### 📄 Environment Setup
 
@@ -75,9 +76,12 @@ fiber.Get("/metrics", monitor.New(monitor.Config{
 ```
 
 Access at: http://localhost:3003/metrics
+
 ### 🔐 Authenticated Routes
 
 All routes are grouped under the /v1 prefix and require an Authorization token in the request header.
+you can create a token by create an account: https://developer.squareup.com
+
 🔒 Header
 
 ```

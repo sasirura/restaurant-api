@@ -1,24 +1,32 @@
-version: "3.8"
-
 services:
-  app:
-    build:
-      context: .
-    container_name: restaurant-api
-    env_file:
-      - .env
-    ports:
-      - "3002:3002"
-    depends_on:
-      - db
-
-  db:
+  restaurant-db:
     image: postgres:16
-    container_name: postgres-db
     restart: always
     environment:
-      POSTGRES_USER: postgres
       POSTGRES_DB: restaurant_api
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - restaurant-net
+
+  restaurant-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DSN: postgres://postgres:password123@restaurant-db:5432/restaurant_api?sslmode=disable
+      PORT: 3003
+    depends_on:
+      - restaurant-db
+    networks:
+      - restaurant-net
     ports:
-      - "5432:5432"
+      - "3003:3003"
+
+volumes:
+  pgdata:
+
+networks:
+  restaurant-net:
